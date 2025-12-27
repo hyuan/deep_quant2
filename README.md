@@ -51,7 +51,24 @@ uv sync
 ## Quick Start
 
 ```bash
-python -m cli.main --config conf/example.yaml --strategy ExampleStrategy
+python -m cli.main --config conf/example_strategy.yaml
+```
+
+## Running Tests
+
+Run all tests:
+```bash
+pytest tests/
+```
+
+Run tests with coverage:
+```bash
+pytest tests/ --cov=. --cov-report=term-missing
+```
+
+Run tests verbosely:
+```bash
+pytest tests/ -v
 ```
 
 ## Documentation

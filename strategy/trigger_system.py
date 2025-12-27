@@ -116,16 +116,29 @@ class TriggerSystem:
             trigger_name: Name of the trigger to remove
             
         Returns:
-            True if trigger was removed, False if not found
+            True if trigger was removed
+            
+        Raises:
+            TriggerValidationError: If trigger not found
         """
         if not isinstance(trigger_name, str):
-            return False
+            raise TriggerValidationError("Trigger name must be a string")
         
-        if trigger_name in self.triggers:
-            del self.triggers[trigger_name]
-            logger.info(f"Removed trigger: {trigger_name}")
-            return True
-        return False
+        if trigger_name not in self.triggers:
+            raise TriggerValidationError(f"Trigger '{trigger_name}' not found")
+        
+        del self.triggers[trigger_name]
+        logger.info(f"Removed trigger: {trigger_name}")
+        return True
+    
+    def get_active_triggers(self) -> List[Trigger]:
+        """
+        Get all enabled triggers.
+        
+        Returns:
+            List of enabled triggers
+        """
+        return [trigger for trigger in self.triggers.values() if trigger.enabled]
     
     def enable_trigger(self, trigger_name: str) -> bool:
         """
@@ -171,19 +184,17 @@ class TriggerSystem:
         """
         return self.triggers.get(trigger_name)
     
-    def validate_condition(self, condition: str) -> List[str]:
+    def validate_condition(self, condition: str) -> None:
         """
         Validate a condition string for syntax errors.
         
         Args:
             condition: Condition string to validate
             
-        Returns:
-            List of validation errors (empty if valid)
+        Raises:
+            TriggerValidationError: If condition is invalid
         """
-        errors = []
         try:
             self.condition_evaluator.parse_expression(condition)
         except ParseError as e:
-            errors.append(str(e))
-        return errors
+            raise TriggerValidationError(f"Invalid condition syntax: {e}") from e
