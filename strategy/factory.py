@@ -67,12 +67,23 @@ def create_indicator(
         for key in list(params.keys()):
             value = params[key]
             if isinstance(value, str) and value in config_parameters:
-                params[key] = config_parameters[value]
+                # Store parameter name for later resolution from strategy.p
+                params[key] = ('param_ref', value)
         
-        # Return factory function
-        def create_indicator_instance(data: bt.AbstractDataBase) -> Any:
+        # Return factory function that accepts strategy instance
+        def create_indicator_instance(strategy_instance: 'BaseStrategy') -> Any:
             try:
-                return indicator_class(data, **params)
+                # Resolve parameter references from strategy instance
+                resolved_params = {}
+                for key, value in params.items():
+                    if isinstance(value, tuple) and len(value) == 2 and value[0] == 'param_ref':
+                        # Get parameter from strategy instance
+                        param_name = value[1]
+                        resolved_params[key] = getattr(strategy_instance.p, param_name, config_parameters.get(param_name))
+                    else:
+                        resolved_params[key] = value
+                
+                return indicator_class(strategy_instance.data, **resolved_params)
             except Exception as e:
                 raise IndicatorCreationError(
                     f"Failed to create {indicator_type} indicator: {e}"
@@ -240,9 +251,27 @@ def create_strategy(
         if not isinstance(triggers_config, list):
             raise StrategyCreationError("Triggers config must be a list")
         
+        # Collect strategy parameters for defining in the strategy class
+        # Convert dict to tuple format for backtrader params
+        strategy_params = []
+        for param_name, param_value in parameters.items():
+            # If the value is a list, it's for optimization - use the first value as default
+            if isinstance(param_value, list):
+                default_value = param_value[0] if param_value else None
+            else:
+                default_value = param_value
+            strategy_params.append((param_name, default_value))
+        
         # Create the strategy class
         class CustomStrategy(BaseStrategy):
             """Dynamically created strategy class."""
+            
+            # Define params - extend the base strategy params with strategy-specific ones
+            # Note: BaseStrategy.params is already a tuple, we just add to it
+            if strategy_params:
+                # Get parent params as tuple
+                parent_params = BaseStrategy.params if isinstance(BaseStrategy.params, tuple) else ()
+                params = parent_params + tuple(strategy_params)
             
             def __init__(self):
                 super().__init__()
@@ -253,7 +282,8 @@ def create_strategy(
                 """Set up indicators based on configuration."""
                 for ind_name, indicator_fn in indicator_funs.items():
                     try:
-                        self.indicators[ind_name] = indicator_fn(self.data)
+                        # Pass self to indicator factory so it can access self.p parameters
+                        self.indicators[ind_name] = indicator_fn(self)
                         self.logger.debug(f"Created indicator: {ind_name}")
                     except Exception as e:
                         self.logger.error(f"Failed to create indicator '{ind_name}': {e}")
@@ -267,9 +297,10 @@ def create_strategy(
                         f"Failed to create trigger system: {e}"
                     ) from e
         
-        # Set class name for better debugging
+        # Set class name and module for better debugging and pickling
         CustomStrategy.__name__ = strategy_name
         CustomStrategy.__qualname__ = strategy_name
+        CustomStrategy.__module__ = __name__
         
         logger.info(f"Created strategy class: {strategy_name}")
         return CustomStrategy

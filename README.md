@@ -50,8 +50,19 @@ uv sync
 
 ## Quick Start
 
+Run Example Strategy
 ```bash
 python -m cli.main --config conf/example_strategy.yaml
+```
+
+Run Volume Spike Strategy
+```bash
+python -m cli.main --config conf/volume_spike_msft.yaml
+```
+
+Run Optimization
+```bash
+python -m cli.main --config conf/volume_spike_optimize.yaml
 ```
 
 ## Running Tests

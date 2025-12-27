@@ -75,7 +75,8 @@ def run_backtest(
         Dictionary containing backtest results
     """
     # Create Cerebro engine
-    cerebro = bt.Cerebro()
+    # For optimization with dynamically created strategies, disable multiprocessing
+    cerebro = bt.Cerebro(maxcpus=1)
     
     # Resolve strategy class
     strategy_class = _resolve_strategy_class(strategy_name, strategy_def)
@@ -91,12 +92,20 @@ def run_backtest(
     if is_optimizing:
         logger.info("Starting optimization mode")
         optimizing_param = optimizing_params[0]  # Take first param for now
-        # Note: optimization parameters would need to be handled differently
-        # For now, just add the strategy without extra parameters
+        
+        # Extract the parameter value from strategy_parameters
+        # In optimization mode, this should be a list of values to try
+        param_values = strategy_parameters.get(optimizing_param)
+        if not isinstance(param_values, list):
+            raise ValueError(f"Optimization parameter '{optimizing_param}' must be a list of values")
+        
+        # Pass the parameter values to optstrategy
+        # The parameter name as keyword argument with list of values
         strategy_idx = cerebro.optstrategy(
             strategy_class,
             optimizing=True,
             optimizing_param=optimizing_param,
+            **{optimizing_param: param_values}
         )
     else:
         logger.info("Starting backtest mode")
