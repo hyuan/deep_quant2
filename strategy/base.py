@@ -170,17 +170,46 @@ class BaseStrategy(bt.Strategy):
     def _build_context(self) -> Dict[str, Any]:
         """Build the evaluation context with current market data and indicators."""
         data = self.datas[0]
-        return {
+        context = {
             'strategy': self,
             'open': float(data.open[0]),
             'high': float(data.high[0]),
             'low': float(data.low[0]),
             'close': float(data.close[0]),
             'volume': float(data.volume[0]),
-            'indicators': self.indicators,
             'datas': self.datas,
             'tickers': self.datas,
         }
+        
+        # Add indicators with their current values (not the objects)
+        for name, indicator in self.indicators.items():
+            try:
+                value = self._get_indicator_value(indicator)
+                if value is not None:
+                    context[f'indicators.{name}'] = value
+            except Exception as e:
+                self.logger.error(f"Failed to add indicator '{name}' to context: {e}")
+        
+        return context
+    
+    def _get_indicator_value(self, indicator: Any) -> Optional[float]:
+        """Safely extract current value from an indicator.
+        
+        Args:
+            indicator: The indicator to extract value from
+            
+        Returns:
+            Float value or None if extraction fails
+        """
+        try:
+            if hasattr(indicator, '__len__') and len(indicator) > 0:
+                return float(indicator[0])
+            elif hasattr(indicator, '__getitem__'):
+                return float(indicator[0])
+            else:
+                return float(indicator)
+        except (IndexError, TypeError, AttributeError, ValueError):
+            return None
     
     # ===== Trigger Execution =====
     

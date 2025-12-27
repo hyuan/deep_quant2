@@ -180,6 +180,13 @@ def main() -> None:
             logger.info(f"Applying {len(dynamic_params)} dynamic parameters")
             strategy_def = map_cli_parameters_to_config(strategy_def, dynamic_params)
         
+        # Merge strategy_parameters from config into strategy_def['parameters']
+        if 'strategy_parameters' in config:
+            if 'parameters' not in strategy_def:
+                strategy_def['parameters'] = {}
+            strategy_def['parameters'].update(config['strategy_parameters'])
+            logger.info(f"Merged strategy parameters: {config['strategy_parameters']}")
+        
         # Prepare tickers
         tickers_str = config['tickers']
         tickers = [t.strip() for t in tickers_str.split(',')] if isinstance(tickers_str, str) else tickers_str

@@ -91,15 +91,17 @@ def run_backtest(
     if is_optimizing:
         logger.info("Starting optimization mode")
         optimizing_param = optimizing_params[0]  # Take first param for now
+        # Note: optimization parameters would need to be handled differently
+        # For now, just add the strategy without extra parameters
         strategy_idx = cerebro.optstrategy(
             strategy_class,
-            **strategy_parameters,
             optimizing=True,
             optimizing_param=optimizing_param,
         )
     else:
         logger.info("Starting backtest mode")
-        strategy_idx = cerebro.addstrategy(strategy_class, **strategy_parameters)
+        # Don't pass strategy_parameters - they're already baked into the strategy class
+        strategy_idx = cerebro.addstrategy(strategy_class)
     
     # Setup sizer
     _setup_sizer(cerebro, config, strategy_idx)

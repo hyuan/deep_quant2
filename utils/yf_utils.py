@@ -4,6 +4,7 @@ import logging
 from pathlib import Path
 from typing import Optional
 
+import pandas as pd
 import yfinance as yf
 
 
@@ -51,6 +52,10 @@ def fetch_and_save_data(
     
     if data.empty:
         raise ValueError(f"Failed to fetch data for {ticker} from Yahoo Finance")
+    
+    # Handle multi-level columns (when multiple tickers downloaded)
+    if isinstance(data.columns, pd.MultiIndex):
+        data.columns = data.columns.droplevel(1)
     
     # Extract relevant columns
     data = data[['Open', 'High', 'Low', 'Close', 'Adj Close', 'Volume']]

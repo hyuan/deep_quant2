@@ -14,8 +14,38 @@ A YAML-driven quantitative trading backtest framework built on Backtrader.
 
 ## Installation
 
+### Prerequisites
+
+#### Step 1: Install Python, pyenv and uv
+
+- This application requires Python 3.10 or later.
+- Install uv: <https://docs.astral.sh/uv/getting-started/installation/>
+- Install pyenv: <https://github.com/pyenv/pyenv?tab=readme-ov-file#installation>
+
+#### Step 2: Set up virtual environment
+
 ```bash
-pip install -e .
+uv venv
+```
+
+#### Step 3: Activate the virtual environment
+
+Windows:
+
+```bash
+.\venv\Scripts\activate
+```
+
+Linux/Mac:
+
+```bash
+source .venv/bin/activate
+```
+
+#### Step 4: Install dependencies
+
+```bash
+uv sync
 ```
 
 ## Quick Start
