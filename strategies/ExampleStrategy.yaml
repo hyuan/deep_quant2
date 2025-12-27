@@ -1,0 +1,36 @@
+name: ExampleStrategy
+
+indicators:
+  sma:
+    type: SMA
+    period: ind_sma_period
+
+triggers:
+  - name: CrossoverTrigger
+    condition: indicators.sma > close
+    actions:
+      - name: main
+        type: TradeAction
+        ticker: tickers[0]
+        signal: Long
+        orderType: Limit
+        price: close * 1.02
+        valid: 7
+      - name: stop_loss
+        type: TradeAction
+        ticker: tickers[0]
+        signal: Short
+        orderType: StopTrailLimit
+        price: close
+        trailpercent: 0.02
+        plimit: close * 0.8
+
+sizer:
+  PercentSizerInt:
+    percents: 95
+
+plot:
+  enabled: false
+
+parameters:
+  ind_sma_period: 5

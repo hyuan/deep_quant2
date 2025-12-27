@@ -1,0 +1,43 @@
+name: VolumeSpikeBasedStrategy
+
+indicators:
+  vs:
+    type: VolumeSpike
+    macd_fast: vs_macd_fast_period
+    macd_slow: vs_macd_slow_period
+    macd_signal: vs_macd_signal_period
+    macd_hist_mean_period: vs_macd_hist_mean_period
+    macd_hist_mean_threshold: vs_macd_hist_mean_threshold
+
+triggers:
+  - name: volumePeakFound
+    condition: indicators.vs == 1
+    actions:
+      - name: main
+        type: TradeAction
+        ticker: tickers[0]
+        signal: Long
+        orderType: Limit
+        price: close * 1.02
+        valid: 7
+      - name: stop_loss
+        type: TradeAction
+        ticker: tickers[0]
+        signal: Short
+        orderType: StopTrail
+        price: close
+        trailpercent: 0.30
+
+sizer:
+  PercentSizerInt:
+    percents: 95
+
+plot:
+  enabled: false
+
+parameters:
+  vs_macd_fast_period: 12
+  vs_macd_slow_period: 26
+  vs_macd_signal_period: 9
+  vs_macd_hist_mean_period: 9
+  vs_macd_hist_mean_threshold: 2000000

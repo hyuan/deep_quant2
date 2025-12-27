@@ -1,0 +1,27 @@
+# Runtime configuration for ExampleStrategy
+
+strategy: ExampleStrategy
+
+start_date: "2023-01-01"
+end_date: "2024-12-01"
+
+tickers: AAPL
+
+sizer:
+  PercentSizerInt:
+    percents: 95
+
+# Strategy-specific parameters
+strategy_parameters:
+  ind_sma_period: 10
+
+# Analysis options
+analysis: true
+json_output: false
+
+# Plot options
+plot:
+  enabled: false
+
+# Initial capital
+initial_cash: 100000.0

@@ -1,0 +1,31 @@
+# Runtime configuration for VolumeSpikeBasedStrategy on MSFT
+
+strategy: VolumeSpikeBasedStrategy
+
+start_date: "2019-12-01"
+end_date: "2024-12-01"
+
+tickers: MSFT
+
+sizer:
+  PercentSizerInt:
+    percents: 95
+
+# Strategy-specific parameters
+strategy_parameters:
+  vs_macd_fast_period: 12
+  vs_macd_slow_period: 26
+  vs_macd_signal_period: 9
+  vs_macd_hist_mean_period: 9
+  vs_macd_hist_mean_threshold: 4000000
+
+# Analysis options
+analysis: true
+json_output: true
+
+# Plot options
+plot:
+  enabled: false
+
+# Initial capital
+initial_cash: 100000.0
