@@ -1,0 +1,28 @@
+# TSLA Volume Spike Strategy Configuration
+# This config should produce the same results as my_quant/conf/volume_spike_based_strategy_v2/tsla.yaml
+
+strategy: VolumeSpikeBasedStrategy
+
+tickers: TSLA
+
+start_date: "2019-12-01"
+end_date: "2024-12-01"
+
+initial_cash: 100000.0
+
+sizer:
+  PercentSizerInt:
+    percents: 95
+
+strategy_parameters:
+  vs_macd_fast_period: 12
+  vs_macd_slow_period: 26
+  vs_macd_signal_period: 9
+  vs_macd_hist_mean_period: 9
+  vs_macd_hist_mean_threshold: 2000000
+
+analysis: true
+json_output: true
+
+plot:
+  enabled: false
