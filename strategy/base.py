@@ -1,5 +1,6 @@
 """Base strategy class with trigger system integration."""
 
+import datetime
 import logging
 from typing import Any, Callable, Dict, List, Optional
 
@@ -379,7 +380,7 @@ class BaseStrategy(bt.Strategy):
         # Valid (days)
         if 'valid' in params:
             valid_days = int(params['valid'])
-            order_params['valid'] = self.datas[0].datetime.date(0) + bt.TimeFrame.Days * valid_days
+            order_params['valid'] = self.datas[0].datetime.date(0) + datetime.timedelta(days=valid_days)
         
         # Stop/Trail parameters
         if 'trailpercent' in params:
