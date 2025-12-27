@@ -62,7 +62,7 @@ python -m cli.main --config conf/volume_spike_msft.yaml
 
 Run Optimization
 ```bash
-python -m cli.main --config conf/volume_spike_optimize.yaml
+python -m cli.main --config conf/volume_spike_tsla_apt.yaml
 ```
 
 ## Running Tests

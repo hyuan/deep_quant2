@@ -40,7 +40,7 @@ python -m cli.main \
 ### Running an Optimization
 
 ```bash
-python -m cli.main --config conf/volume_spike_optimize.yaml
+python -m cli.main --config conf/volume_spike_tsla_apt.yaml
 ```
 
 ## Examples
@@ -67,7 +67,7 @@ python -m cli.main --config conf/volume_spike_msft.yaml
 ### 3. Optimize Volume Spike Threshold
 
 ```bash
-python -m cli.main --config conf/volume_spike_optimize.yaml
+python -m cli.main --config conf/volume_spike_tsla_apt.yaml
 ```
 
 ### 4. Multiple Tickers
