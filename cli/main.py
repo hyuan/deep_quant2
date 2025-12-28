@@ -101,6 +101,11 @@ def parse_args() -> Tuple[Dict[str, Any], Dict[str, Any]]:
         help='Initial cash amount (default: 100000.0)'
     )
     
+    # Show help if no arguments provided
+    if len(sys.argv) == 1:
+        parser.print_help()
+        sys.exit(0)
+    
     # Parse known args and collect unknowns for dynamic parameters
     args, unknown = parser.parse_known_args()
     
