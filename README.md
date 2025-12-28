@@ -50,6 +50,37 @@ uv sync
 
 ## Quick Start
 
+### Option 1: Run with pipx (Recommended for end users)
+
+Install pipx if you haven't already:
+```bash
+# macOS
+brew install pipx
+pipx ensurepath
+
+# Linux
+python3 -m pip install --user pipx
+python3 -m pipx ensurepath
+
+# Windows
+python -m pip install --user pipx
+python -m pipx ensurepath
+```
+
+Install and run the application:
+```bash
+# Install from the project directory
+pipx install .
+
+# Run the application
+my-quant-v2 --config conf/example_strategy.yaml
+
+# Or use the CLI module directly
+python -m cli.main --config conf/example_strategy.yaml
+```
+
+### Option 2: Run with uv (For development)
+
 Run Example Strategy
 ```bash
 python -m cli.main --config conf/example_strategy.yaml
