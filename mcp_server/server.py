@@ -394,7 +394,8 @@ def fetch_market_data(
     ticker: str,
     start_date: str,
     end_date: str,
-    force_download: bool = False
+    force_download: bool = False,
+    use_cache: bool = True
 ) -> Dict[str, Any]:
     """
     Fetch historical market data from Yahoo Finance.
@@ -407,6 +408,7 @@ def fetch_market_data(
         start_date: Start date in YYYY-MM-DD format
         end_date: End date in YYYY-MM-DD format
         force_download: If True, re-download even if cached
+        use_cache: If False, always download fresh data and skip cache indexing
         
     Returns:
         Information about the fetched data
@@ -418,10 +420,10 @@ def fetch_market_data(
     
     datas_folder = str(_get_project_root() / "datas")
     
-    # Check if cached
+    # Check if cached (only relevant when use_cache=True)
     data_path = Path(datas_folder)
     expected_file = data_path / f"{ticker}-{start_date}-to-{end_date}.csv"
-    was_cached = expected_file.exists() and not force_download
+    was_cached = use_cache and expected_file.exists() and not force_download
     
     try:
         file_path = fetch_and_save_data(
@@ -429,7 +431,8 @@ def fetch_market_data(
             start=start_date,
             end=end_date,
             datas_folder=datas_folder,
-            force_download=force_download
+            force_download=force_download,
+            use_cache=use_cache
         )
         
         # Count rows
@@ -446,6 +449,65 @@ def fetch_market_data(
         }
     except Exception as e:
         return {"error": str(e)}
+
+
+@mcp.tool()
+def list_cached_data() -> List[Dict[str, Any]]:
+    """
+    List all cached market data files with metadata.
+
+    Returns cached files with information about ticker, date range,
+    download time, file size, and checksum.
+
+    Returns:
+        List of cached data entries with metadata
+    """
+    from utils.yf_utils import list_cached_data as _list_cached_data
+
+    datas_folder = str(_get_project_root() / "datas")
+    return _list_cached_data(datas_folder)
+
+
+@mcp.tool()
+def clear_cache(ticker: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Clear cached market data files.
+
+    Args:
+        ticker: If provided, only clear cache for this ticker.
+                Otherwise, clears all cached data.
+
+    Returns:
+        Result with count of removed files
+    """
+    from utils.yf_utils import clear_cache as _clear_cache
+
+    datas_folder = str(_get_project_root() / "datas")
+    count = _clear_cache(datas_folder, ticker)
+
+    return {
+        "success": True,
+        "removed_count": count,
+        "ticker": ticker or "all",
+        "message": f"Removed {count} cached file(s)"
+    }
+
+
+@mcp.tool()
+def get_cache_stats() -> Dict[str, Any]:
+    """
+    Get cache statistics.
+
+    Returns total cache size, entry count, oldest/newest entries,
+    and list of cached tickers.
+
+    Returns:
+        Cache statistics
+    """
+    from utils.yf_utils import get_cache_stats as _get_cache_stats
+
+    datas_folder = str(_get_project_root() / "datas")
+    return _get_cache_stats(datas_folder)
 
 
 # ============================================================================
