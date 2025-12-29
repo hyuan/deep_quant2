@@ -35,7 +35,7 @@ ENV/
 
 # Data and outputs
 datas/*.csv
-datas/temp/
+datas/cache/
 output/*.json
 output/*.csv
 output/json/

@@ -206,7 +206,7 @@ def main() -> None:
                     ticker,
                     config['start_date'],
                     config['end_date'],
-                    'datas/temp'
+                    'datas/cache'
                 )
                 data_files.append(data_file)
                 logger.info(f"  {ticker}: {data_file}")
