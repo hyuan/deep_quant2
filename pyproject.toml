@@ -13,10 +13,13 @@ dependencies = [
     "matplotlib~=3.9.2",
     "numpy==2.1.3",
     "python-dateutil~=2.9.0",
+    "mcp[cli]>=1.0.0",
+    "pydantic>=2.0.0",
 ]
 
 [project.scripts]
 my-quant-v2 = "cli.main:main"
+my-quant-v2-mcp = "mcp_server.server:main"
 
 [project.optional-dependencies]
 dev = [
@@ -32,7 +35,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["cli*", "core*", "strategy*", "indicator*", "utils*"]
+include = ["cli*", "core*", "strategy*", "indicator*", "utils*", "mcp_server*"]
 exclude = ["tests*", "conf*", "datas*", "output*", "templates*", "strategies*", "docs*", "temp*"]
 
 [tool.black]
