@@ -541,12 +541,18 @@ def list_indicators() -> List[Dict[str, Any]]:
 
 
 @mcp.tool()
-def list_runtime_configs() -> List[Dict[str, Any]]:
+def list_runtime_configs(strategy_name: Optional[str] = None) -> List[Dict[str, Any]]:
     """
     List available runtime configuration examples.
     
     These are example configurations that show how to set up
     backtest runs with different strategies and parameters.
+    
+    Args:
+        strategy_name: Optional filter by strategy name (case-insensitive partial match)
+        
+    Returns:
+        List of runtime configurations, optionally filtered by strategy
     """
     conf_dir = _get_project_root() / "conf"
     configs = []
@@ -559,10 +565,17 @@ def list_runtime_configs() -> List[Dict[str, Any]]:
             with open(file, 'r') as f:
                 config = yaml.safe_load(f) or {}
             
+            config_strategy = config.get("strategy", "")
+            
+            # Filter by strategy name if provided
+            if strategy_name:
+                if strategy_name.lower() not in config_strategy.lower():
+                    continue
+            
             configs.append({
                 "name": file.stem,
                 "file_path": str(file),
-                "strategy": config.get("strategy"),
+                "strategy": config_strategy,
                 "tickers": config.get("tickers"),
                 "start_date": config.get("start_date"),
                 "end_date": config.get("end_date")
