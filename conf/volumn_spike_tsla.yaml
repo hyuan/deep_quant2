@@ -15,10 +15,15 @@ sizer:
     percents: 95
 
 strategy_parameters:
+  # MACD fast period (shorter-term EMA)
   vs_macd_fast_period: 12
+  # MACD slow period (longer-term EMA)
   vs_macd_slow_period: 26
+  # MACD signal line period (EMA of histogram)
   vs_macd_signal_period: 9
+  # Period for calculating mean of MACD histogram
   vs_macd_hist_mean_period: 9
+  # Threshold for MACD histogram mean to trigger signals
   vs_macd_hist_mean_threshold: 2000000
 
 analysis: true
